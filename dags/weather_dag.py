@@ -10,5 +10,7 @@ default_args = {
 }
 
 dag = DAG(
-    
+    'openweathermap',
+    default_args=default_args,
+    schedule_interval=timedelta(days=1)
 )
