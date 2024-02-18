@@ -14,3 +14,13 @@ dag = DAG(
     default_args=default_args,
     schedule_interval=timedelta(days=1)
 )
+
+weather_fetch_task = SimpleHttpOperator(
+    task_id ='weather_fetch',
+    method = 'GET',
+    http_conn_id='',
+    endpoint='',
+    xcom_push=True,
+    headers={"Content-Type": "application/json"},
+    dag=dag
+)
