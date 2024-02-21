@@ -3,11 +3,8 @@ from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.http_operator import SimpleHttpOperator
 from datetime import datetime, timedelta
-import logging
+
 OPENWEATHERMAP_API_KEY = Variable.get("OPENWEATHERMAP_API_KEY")
-# OPENWEATHERMAP_API_KEY= os.environ.get('OPENWEATHERMAP_API_KEY')
-# print(OPENWEATHERMAP_API_KEY)
-logging.info(f"Retrieved API key: {OPENWEATHERMAP_API_KEY}")
 
 default_args = {
     'owner':'snowglobe',
