@@ -10,3 +10,4 @@ app = Flask(__name__, static_folder='../../frontend/public', static_url_path='/'
 login = LoginManager(app)
 
 CORS(app) #Enables CORS support for the application.
+print()

@@ -1,3 +1,4 @@
 .env
 dev.db
 instances
+__pycache__/
