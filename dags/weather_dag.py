@@ -28,18 +28,30 @@ def weather_etl():
 
     @task
     def extract(api_results):
-        return json.loads(api_results)
+        return json.loads(api_results)['list']
 
     @task
     def transform(data):
-        x=data['list']
-        result = {}
-        result['name'] = "Crystal Mountain"
-        result['date'] = datetime.utcfromtimestamp(x[0]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
-        print(result)
-        return data['list']
+        result=[]
+        for i in data:
+            dict_result={}
+            dict_result['name'] = "Crystal Mountain"
+            dict_result['date'] = datetime.utcfromtimestamp(i['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
+            dict_result['temp'] = i['main']['temp']
+            dict_result['weather']=i['weather'][0]['main']
+            result.append(dict_result)
+        return result
+        # x=data['list']
+        # result = {}
+        # result['name'] = "Crystal Mountain"
+        # result['date'] = datetime.utcfromtimestamp(x[0]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
+        # print(result)
+        # return data['list']
+
+
     extracted_data = extract(api_results=get_weather_results_task.output)
     transformed_data = transform(extracted_data)
+
 weather_etl()
 # from airflow import DAG
 # from airflow.models import Variable
