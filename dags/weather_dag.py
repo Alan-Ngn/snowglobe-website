@@ -22,73 +22,72 @@ def weather_etl():
                         'mountain': 'Crystal Mountain'
                     },
                     {
-                        'lat': 46.92930718381659,
-                        'lon':-121.50084437354852,
+                        'lat': 47.408923006793,
+                        'lon':-121.4130210782378,
                         'mountain': 'Summit at Snoqualmie'
+                    },
+                    {
+                        'lat': 47.74457508492699,
+                        'lon':-121.08910872510756,
+                        'mountain': 'Stevens Pass'
+                    },
+                    {
+                        'lat': 39.63392622173591,
+                        'lon':-105.87151011534075,
+                        'mountain': 'Araphaoe Basin'
+                    },
+                    {
+                        'lat': 39.478058458168334,
+                        'lon':-106.16144782958219,
+                        'mountain': 'Copper Mountain'
                     },
                 ]
 
-
-    # lat = 46.92930718381659
-    # lon =-121.50084437354852
     OPENWEATHERMAP_API_KEY = Variable.get("OPENWEATHERMAP_API_KEY")
-    # get_weather_results_task = HttpOperator(
-    #     task_id ='weather_fetch',
-    #     method = 'GET',
-    #     http_conn_id='openweathermap_api',
-    #     endpoint=f'/data/2.5/forecast',
-    #     headers={"Content-Type": "application/json"},
-    #     data={
-    #         'lat':lat,
-    #         'lon':lon,
-    #         'appid':OPENWEATHERMAP_API_KEY,
-    #         'units':'metric'
-    #     },
-    #     do_xcom_push=True,
-    # )
 
     @task
     def extract(api_results, mountain):
         return [mountain]+json.loads(api_results)['list']
 
+    #transforming data
     @task
-    def transform(data):
+    def transform(extracted_ski_resorts):
         result=[]
-        for i in data:
+        for i in extracted_ski_resorts:
             for k in range(1,len(i)):
-            # for k in i:
-                dict_result={}
-                dict_result['name'] = i[0]
-                print(i[0],i[k])
-                dict_result['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
-                dict_result['temp'] = i[k]['main']['temp']
-                dict_result['weather']=i[k]['weather'][0]['main']
-                result.append(dict_result)
+                data_entry={}
+                data_entry['name'] = i[0]
+                data_entry['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
+                data_entry['temp'] = i[k]['main']['temp']
+                data_entry['weather']=i[k]['weather'][0]['description']
+                if 'snow' in i[k]:
+                    data_entry['snow'] = i[k]['snow']['3h']
+                if 'rain' in i[k]:
+                    data_entry['rain'] = i[k]['rain']['3h']
+                result.append(data_entry)
         return result
 
-    result_test=[]
-    for i in ski_resorts:
-        mountain_task = i['mountain'].replace(' ', '_').lower()
+
+    # extracting data with task
+    extracted_resorts=[]
+    for resort in ski_resorts:
+        resort_task_id = resort['mountain'].replace(' ', '_').lower()
         get_weather_results_task = HttpOperator(
-            task_id =f'weather_fetch_{mountain_task}',
+            task_id =f'weather_fetch_{resort_task_id}',
             method = 'GET',
             http_conn_id='openweathermap_api',
             endpoint=f'/data/2.5/forecast',
             headers={"Content-Type": "application/json"},
             data={
-                'lat':i['lat'],
-                'lon':i['lon'],
+                'lat':resort['lat'],
+                'lon':resort['lon'],
                 'appid':OPENWEATHERMAP_API_KEY,
                 'units':'metric'
             },
             do_xcom_push=True,
         )
-        result_test.append(extract(api_results=get_weather_results_task.output, mountain=i['mountain']))
+        extracted_resorts.append(extract(api_results=get_weather_results_task.output, mountain=resort['mountain']))
 
-
-
-
-    # extracted_data = extract(api_results=get_weather_results_task.output, mountain="Crystal Mountain")
-    transformed_data = transform(result_test)
+    transformed_data = transform(extracted_resorts)
 
 weather_etl()
