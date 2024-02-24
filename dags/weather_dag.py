@@ -53,15 +53,18 @@ def weather_etl():
 
     @task
     def transform(data):
-        # result=[]
-        # for i in data:
-        #     dict_result={}
-        #     dict_result['name'] = "Crystal Mountain"
-        #     dict_result['date'] = datetime.utcfromtimestamp(i['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
-        #     dict_result['temp'] = i['main']['temp']
-        #     dict_result['weather']=i['weather'][0]['main']
-        #     result.append(dict_result)
-        return data
+        result=[]
+        for i in data:
+            for k in range(1,len(i)):
+            # for k in i:
+                dict_result={}
+                dict_result['name'] = i[0]
+                print(i[0],i[k])
+                dict_result['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
+                dict_result['temp'] = i[k]['main']['temp']
+                dict_result['weather']=i[k]['weather'][0]['main']
+                result.append(dict_result)
+        return result
 
     result_test=[]
     for i in ski_resorts:
