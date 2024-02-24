@@ -51,20 +51,36 @@ def weather_etl():
 
     #transforming data
     @task
+    # def transform(extracted_ski_resorts):
+    #     result=[]
+    #     for i in extracted_ski_resorts:
+    #         for k in range(1,len(i)):
+    #             data_entry={}
+    #             data_entry['name'] = i[0]
+    #             data_entry['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
+    #             data_entry['temp'] = i[k]['main']['temp']
+    #             data_entry['weather']=i[k]['weather'][0]['description']
+    #             if 'snow' in i[k]:
+    #                 data_entry['snow'] = i[k]['snow']['3h']
+    #             if 'rain' in i[k]:
+    #                 data_entry['rain'] = i[k]['rain']['3h']
+    #             result.append(data_entry)
+    #     return result
     def transform(extracted_ski_resorts):
-        result=[]
-        for i in extracted_ski_resorts:
-            for k in range(1,len(i)):
-                data_entry={}
-                data_entry['name'] = i[0]
-                data_entry['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
-                data_entry['temp'] = i[k]['main']['temp']
-                data_entry['weather']=i[k]['weather'][0]['description']
-                if 'snow' in i[k]:
-                    data_entry['snow'] = i[k]['snow']['3h']
-                if 'rain' in i[k]:
-                    data_entry['rain'] = i[k]['rain']['3h']
-                result.append(data_entry)
+        result = [
+            {
+                'name': mountain,
+                'date': datetime.utcfromtimestamp(entry['dt']).strftime('%Y-%m-%d %H:%M:%S UTC'),
+                'temp': entry['main']['temp'],
+                'weather': entry['weather'][0]['description'],
+                'wind': entry['wind']['speed'] if 'wind' in entry else None,
+                'snow': entry['snow']['3h'] if 'snow' in entry else None,
+                'rain': entry['rain']['3h'] if 'rain' in entry else None,
+
+            }
+            for mountain, *entries in extracted_ski_resorts
+            for entry in entries
+        ]
         return result
 
 
