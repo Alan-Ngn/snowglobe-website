@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 import os
 
 enviornment = os.getenv("FLASK_ENV") #setting environment to production
