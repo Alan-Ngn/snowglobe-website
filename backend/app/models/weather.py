@@ -6,6 +6,7 @@ class Weather(db.Model):
     if enviornment == "production":
         __table_args__= {'schema': SCHEMA}
 
+
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     name = db.Column(db.String(255), nullable=False)
