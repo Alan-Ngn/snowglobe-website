@@ -1,11 +1,10 @@
-from .db import db, enviornment, SCHEMA, add_prefix_for_prod, func
+from .db import db, environment, SCHEMA, add_prefix_for_prod, func
 
 class Weather(db.Model):
     __tablename__='weather' #does this need to be plural?
 
-    if enviornment == "production":
+    if environment == "production":
         __table_args__= {'schema': SCHEMA}
-
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
