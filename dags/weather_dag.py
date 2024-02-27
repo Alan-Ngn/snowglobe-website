@@ -135,6 +135,6 @@ def weather_etl():
         extracted_resorts.append(extract(api_results=get_weather_results_task.output, mountain=resort['mountain']))
 
     transformed_data = transform(extracted_resorts)
-    load_data = load(transformed_data)
+    # load_data = load(transformed_data)
 
 weather_etl()
