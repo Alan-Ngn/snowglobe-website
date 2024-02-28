@@ -17,5 +17,7 @@ def validation_errors_to_error_messages(validation_errors):
 
 @weather_routes.route('/')
 def get_weather():
-    weather = Weather.query.all()
-    return weather.to_dict()
+    print('hello')
+    weather_all = Weather.query.all()
+    x =[weather.to_dict() for weather in weather_all]
+    return x
