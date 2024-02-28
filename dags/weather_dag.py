@@ -1,9 +1,12 @@
+# import sys
+# sys.path.append('/home/alannguyen/snowglobe-website/')
 from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.providers.http.operators.http import HttpOperator
 from datetime import datetime, timedelta
-from ..backend.app.models import db, Weather
-from ..backend.app.forms import WeatherForm
+from backend.app.models import db, Weather
+from backend.app.forms import WeatherForm
+
 import json
 default_args = {
     'owner':'snowglobe',
@@ -92,7 +95,7 @@ def weather_etl():
             records_to_insert = [
                 Weather(
                     name=entry['name'],
-                    date=entry['date'],
+                    date=datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'),
                     temp=entry['temp'],
                     weather=entry['weather'],
                     wind=entry['wind'],
