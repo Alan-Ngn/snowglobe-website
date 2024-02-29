@@ -8,6 +8,7 @@ export interface Weather {
     snow: number,
     wind: number,
     rain: number,
+    id: number,
   }
 // Define the initial state
 interface WeatherState {
