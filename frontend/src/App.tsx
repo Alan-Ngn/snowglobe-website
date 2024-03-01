@@ -23,7 +23,7 @@ const App: FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<WeatherList />} />
-        <Route path="/:weatherId" element={<WeatherItem/>} />
+        <Route path="/:location" element={<WeatherItem/>} />
       </Routes>
     </Router>
   );

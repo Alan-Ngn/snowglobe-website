@@ -6,8 +6,11 @@ export const apiWeatherSlice = createApi({
     endpoints: builder => ({
         getWeathers: builder.query({
             query: () =>'/weathers'
+        }),
+        getLocation: builder.query({
+            query: location => `/weathers/${location}`
         })
     })
 })
 
-export const { useGetWeathersQuery } = apiWeatherSlice
+export const { useGetWeathersQuery, useGetLocationQuery } = apiWeatherSlice
