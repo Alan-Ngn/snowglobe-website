@@ -43,10 +43,22 @@ const WeatherItem: React.FC =() =>{{
     //         }
     //     }
     // };
+    const options: ChartOptions<'line'>= {
+        scales: {
+          x: {
+            type: 'category', // Now 'category' scale should work without errors
+            position: 'bottom',
+          },
+          y: {
+            type: 'linear',
+            beginAtZero: true,
+          },
+        },
+      }
     return (
         <>
             <div>{location}</div>
-            <Line data={data}  />
+            <Line data={data} options={options}  />
 
         </>
     )
