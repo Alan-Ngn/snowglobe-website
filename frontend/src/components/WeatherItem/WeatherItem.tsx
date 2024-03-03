@@ -16,10 +16,7 @@ const WeatherItem: React.FC =() =>{{
     const { location } = useParams()
     const { data:loc, error, isLoading } = useGetLocationQuery(location)
     console.log(loc)
-    // interface LineProps {
-    //     options: ChartOptions<'line'>;
-    //     data: ChartData<'line'>;
-    //   }
+
     const data = {
         labels : loc?.map((row: Weather) => row.date) || [],
         datasets: [
@@ -33,20 +30,11 @@ const WeatherItem: React.FC =() =>{{
         ]
 
     }
-    // const options: ChartOptions = {
-    //     plugins: {
-    //         // legend: true
 
-    //     }, scales: {
-    //         y: {
-
-    //         }
-    //     }
-    // };
     const options: ChartOptions<'line'>= {
         scales: {
           x: {
-            type: 'category', // Now 'category' scale should work without errors
+            type: 'category',
             position: 'bottom',
           },
           y: {
