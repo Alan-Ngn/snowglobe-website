@@ -1,16 +1,17 @@
 import React from "react"
 import { useParams } from "react-router-dom"
 import { useGetLocationQuery } from "../../features/api/apiSlice"
-import { Chart, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js"
+import { Chart, LineElement, BarElement, CategoryScale, LinearScale, PointElement } from "chart.js"
 import { Weather } from "../../features/weather/weatherSlice"
-import { Line } from "react-chartjs-2"
+import { Line, Bar } from "react-chartjs-2"
 import { ChartOptions,ChartData } from "chart.js"
 
 Chart.register(
     LineElement,
     CategoryScale,
     LinearScale,
-    PointElement
+    PointElement,
+    BarElement
     )
 const WeatherItem: React.FC =() =>{{
     const { location } = useParams()
@@ -47,6 +48,7 @@ const WeatherItem: React.FC =() =>{{
         <>
             <div>{location}</div>
             <Line data={data} options={options}  />
+            <Bar data={data}   />
 
         </>
     )
