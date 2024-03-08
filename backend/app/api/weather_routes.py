@@ -26,11 +26,22 @@ def get_weather():
     return x
 
 @weather_routes.route('/<string:location>')
+# def get_location(location):
+#     location = Weather.query.filter_by(name=location).all()
+#     weather_data =[x.to_dict() for x in location]
+#     df = pd.DataFrame(weather_data)
+#     df['date'] = pd.to_datetime(df['date']).dt.date
+#     result = df.groupby(['date','name']).agg({'rain': 'sum', 'snow': 'sum'}).reset_index()
+#     x = result.to_dict(orient='records')
+#     print(x)
+#     return x
+
 def get_location(location):
-    location = Weather.query.filter_by(name=location).all()
-    weather_data =[x.to_dict() for x in location]
-    df = pd.DataFrame(weather_data)
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    result = df.groupby(['date','name']).agg({'rain': 'sum', 'snow': 'sum'}).reset_index()
-    x = result.to_dict(orient='records')
-    return x
+    sql_command = """
+        SELECT Date(date) AS date, name, SUM(COALESCE(rain,0)) AS rain, SUM(COALESCE(snow,0)) AS snow
+        FROM Weather
+        WHERE name = :location
+        GROUP BY Date(date), name;
+    """
+    result = db.session.execute(sql_command, {'location': location})
+    return [dict(row) for row in result]
