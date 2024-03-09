@@ -1,13 +1,10 @@
-# import sys
-# sys.path.append('/home/alannguyen/snowglobe-website/')
+
 from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.providers.http.operators.http import HttpOperator
 from datetime import datetime, timedelta
-# from backend.app.models import db, Weather
-# from backend.app.forms import WeatherForm
 from airflow.providers.sqlite.hooks.sqlite import SqliteHook
-# from airflow.providers.sqlite.operators.sqlite import SqliteOperator
+
 import json
 default_args = {
     'owner':'snowglobe',
@@ -58,21 +55,6 @@ def weather_etl():
 
     #transforming data
     @task
-    # def transform(extracted_ski_resorts):
-    #     result=[]
-    #     for i in extracted_ski_resorts:
-    #         for k in range(1,len(i)):
-    #             data_entry={}
-    #             data_entry['name'] = i[0]
-    #             data_entry['date'] = datetime.utcfromtimestamp(i[k]['dt']).strftime('%Y-%m-%d %H:%M:%S UTC')
-    #             data_entry['temp'] = i[k]['main']['temp']
-    #             data_entry['weather']=i[k]['weather'][0]['description']
-    #             if 'snow' in i[k]:
-    #                 data_entry['snow'] = i[k]['snow']['3h']
-    #             if 'rain' in i[k]:
-    #                 data_entry['rain'] = i[k]['rain']['3h']
-    #             result.append(data_entry)
-    #     return result
     def transform(extracted_ski_resorts):
         result = [
             {
@@ -96,30 +78,6 @@ def weather_etl():
         target_fields = ['name', 'date', 'temp', 'weather', 'wind', 'snow','rain']
         rows = [(entry['name'], entry['date'], entry['temp'], entry['weather'], entry['wind'], entry['snow'], entry['rain']) for entry in data]
         sqlite_hook.insert_rows(table='weather',rows=rows, target_fields=target_fields)
-        # form = WeatherForm()
-        # if form.validate_on_submit():
-        #     records_to_insert = [
-        #         Weather(
-        #             name=entry['name'],
-        #             date=datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'),
-        #             temp=entry['temp'],
-        #             weather=entry['weather'],
-        #             wind=entry['wind'],
-        #             snow=entry['snow'],
-        #             rain=entry['rain'],
-        #         )
-        #         for entry in data
-        #     ]
-
-        #     try:
-        #         db.session.add_all(records_to_insert)
-        #         db.session.commit()
-        #     except Exception as e:
-        #         # Handle exceptions (log, rollback, etc.)
-        #         db.session.rollback()
-        #         print(f"Error during data insertion: {e}")
-        #     finally:
-        #         db.session.close()
 
 
 
