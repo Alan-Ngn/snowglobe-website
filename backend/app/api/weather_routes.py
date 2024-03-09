@@ -44,4 +44,6 @@ def get_location(location):
         GROUP BY Date(date), name;
     """
     result = db.session.execute(sql_command, {'location': location})
-    return [dict(row) for row in result]
+    
+    x = [dict(row) for row in result]
+    return x

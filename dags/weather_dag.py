@@ -77,7 +77,7 @@ def weather_etl():
         result = [
             {
                 'name': mountain,
-                'date': datetime.utcfromtimestamp(entry['dt']).strftime('%Y-%m-%d %H:%M:%S UTC'),
+                'date': datetime.utcfromtimestamp(entry['dt']).strftime('%Y-%m-%d %H:%M:%S'),
                 'temp': entry['main']['temp'],
                 'weather': entry['weather'][0]['description'],
                 'wind': entry['wind']['speed'] if 'wind' in entry else None,
