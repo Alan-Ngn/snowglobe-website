@@ -39,6 +39,6 @@ def undo_weather():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.channels RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute(text("DELETE FROM channels"))
+        db.session.execute(text("DELETE FROM weather"))
 
     db.session.commit()

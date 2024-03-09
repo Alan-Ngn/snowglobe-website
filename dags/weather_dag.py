@@ -4,9 +4,10 @@ from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.providers.http.operators.http import HttpOperator
 from datetime import datetime, timedelta
-from backend.app.models import db, Weather
-from backend.app.forms import WeatherForm
-
+# from backend.app.models import db, Weather
+# from backend.app.forms import WeatherForm
+from airflow.providers.sqlite.hooks.sqlite import SqliteHook
+# from airflow.providers.sqlite.operators.sqlite import SqliteOperator
 import json
 default_args = {
     'owner':'snowglobe',
@@ -17,7 +18,8 @@ default_args = {
 @dag(
     dag_id='openweathermap',
     default_args=default_args,
-    schedule_interval=timedelta(days=1)
+    schedule_interval=timedelta(days=1),
+    catchup=False
 )
 def weather_etl():
     ski_resorts=[
@@ -90,30 +92,34 @@ def weather_etl():
 
     @task
     def load(data):
-        form = WeatherForm()
-        if form.validate_on_submit():
-            records_to_insert = [
-                Weather(
-                    name=entry['name'],
-                    date=datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'),
-                    temp=entry['temp'],
-                    weather=entry['weather'],
-                    wind=entry['wind'],
-                    snow=entry['snow'],
-                    rain=entry['rain'],
-                )
-                for entry in data
-            ]
+        sqlite_hook=SqliteHook(sqlite_conn_id='sqlite_dev_db')
+        target_fields = ['name', 'date', 'temp', 'weather', 'wind', 'snow','rain']
+        rows = [(entry['name'], entry['date'], entry['temp'], entry['weather'], entry['wind'], entry['snow'], entry['rain']) for entry in data]
+        sqlite_hook.insert_rows(table='weather',rows=rows, target_fields=target_fields)
+        # form = WeatherForm()
+        # if form.validate_on_submit():
+        #     records_to_insert = [
+        #         Weather(
+        #             name=entry['name'],
+        #             date=datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S'),
+        #             temp=entry['temp'],
+        #             weather=entry['weather'],
+        #             wind=entry['wind'],
+        #             snow=entry['snow'],
+        #             rain=entry['rain'],
+        #         )
+        #         for entry in data
+        #     ]
 
-            try:
-                db.session.add_all(records_to_insert)
-                db.session.commit()
-            except Exception as e:
-                # Handle exceptions (log, rollback, etc.)
-                db.session.rollback()
-                print(f"Error during data insertion: {e}")
-            finally:
-                db.session.close()
+        #     try:
+        #         db.session.add_all(records_to_insert)
+        #         db.session.commit()
+        #     except Exception as e:
+        #         # Handle exceptions (log, rollback, etc.)
+        #         db.session.rollback()
+        #         print(f"Error during data insertion: {e}")
+        #     finally:
+        #         db.session.close()
 
 
 
@@ -138,6 +144,6 @@ def weather_etl():
         extracted_resorts.append(extract(api_results=get_weather_results_task.output, mountain=resort['mountain']))
 
     transformed_data = transform(extracted_resorts)
-    # load_data = load(transformed_data)
+    load_data = load(transformed_data)
 
 weather_etl()
