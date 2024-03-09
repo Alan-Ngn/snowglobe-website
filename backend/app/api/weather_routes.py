@@ -17,12 +17,19 @@ def validation_errors_to_error_messages(validation_errors):
 
 @weather_routes.route('/')
 def get_weather():
-    weather_all = Weather.query.all()
-    weather_data =[weather.to_dict() for weather in weather_all]
-    df = pd.DataFrame(weather_data)
-    df['date'] = pd.to_datetime(df['date']).dt.date
-    result = df.groupby(['date','name']).agg({'rain': 'sum', 'snow': 'sum'}).reset_index()
-    x = result.to_dict(orient='records')
+    sql_command = """
+        SELECT name
+        FROM Weather
+        GROUP BY name;
+    """
+    result = db.session.execute(sql_command)
+    # weather_all = Weather.query.all()
+    # weather_data =[weather.to_dict() for weather in weather_all]
+    # df = pd.DataFrame(weather_data)
+    # df['date'] = pd.to_datetime(df['date']).dt.date
+    # result = df.groupby(['date','name']).agg({'rain': 'sum', 'snow': 'sum'}).reset_index()
+    # x = result.to_dict(orient='records')
+    x = [dict(row) for row in result]
     return x
 
 @weather_routes.route('/<string:location>')
@@ -44,6 +51,6 @@ def get_location(location):
         GROUP BY Date(date), name;
     """
     result = db.session.execute(sql_command, {'location': location})
-    
+
     x = [dict(row) for row in result]
     return x
