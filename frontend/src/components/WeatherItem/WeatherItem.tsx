@@ -2,7 +2,7 @@ import React from "react"
 import { useParams } from "react-router-dom"
 import { useGetLocationQuery } from "../../features/api/apiSlice"
 import { Chart, LineElement, BarElement, CategoryScale, LinearScale, PointElement, TimeScale } from "chart.js"
-import { Weather } from "../../features/weather/weatherSlice"
+// import { Weather } from "../../features/weather/weatherSlice"
 import { Line, Bar } from "react-chartjs-2"
 import { ChartOptions,ChartData } from "chart.js"
 
@@ -14,6 +14,16 @@ Chart.register(
     BarElement,
     TimeScale
     )
+interface Weather {
+      date: Date,
+      name: string,
+      temp: number,
+      weather: string,
+      snow: number,
+      wind: number,
+      rain: number,
+      id: number,
+    }
 const WeatherItem: React.FC =() =>{{
     const { location } = useParams()
     const { data:loc, error, isLoading } = useGetLocationQuery(location)
