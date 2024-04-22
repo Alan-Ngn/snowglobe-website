@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Fragment } from "react"
 import { useGetWeathersQuery } from "../../features/api/apiSlice"
 import { Link } from "react-router-dom";
 // import { Weather } from "../../features/weather/weatherSlice";
@@ -17,17 +17,17 @@ const WeatherList: React.FC = () => {
     // console.log(weathers[0])
     console.log(weathers)
     return (
-        <>
-            <div>hi</div>
-            {weathers && weathers.length > 0 && (
-                weathers.map((weather: Weather)=> (
-                    <Link to={`/${weather.name}`}>
-                        <div>{weather.name}</div>
+        <Fragment>
+                {weathers && weathers.length > 0 && (
+                    weathers.map((weather: Weather)=> (
+                        <Link to={`/${weather.name}`}>
+                            <div>{weather.name}</div>
 
-                    </Link>
-                ))
-            )}
-        </>
+                        </Link>
+                    ))
+                )}
+
+        </Fragment>
     );
 }
 export default WeatherList
