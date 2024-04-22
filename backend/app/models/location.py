@@ -15,5 +15,5 @@ class Location(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'url': self.name,
+            'url': self.url,
         }

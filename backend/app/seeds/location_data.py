@@ -1,0 +1,1 @@
+data=[{'name': 'Crystal Mountain', 'url': 'https://www.crystalmountainresort.com/-/media/crystal/images/2122-images/2122-maps/2122-winter-map-full.jpg?w=480&rev=dfe9a4528fe34b89b0d3f022883203f1&hash=CAF06E62BC0787359493FE8CD8CC2B8C'}, {'name': 'Summit at Snoqualmie', 'url': 'https://www.skiresort.info/fileadmin/_processed_/f7/78/85/57/a23b3045ec.jpg'}]
